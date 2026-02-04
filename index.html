@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Neon Browser</title>
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(circle at top, #071426 0, #02030a 45%, #000000 100%);
+      font-family: Arial, sans-serif;
+      color: #e0f4ff;
+    }
+
+    .container {
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 52px;
+      margin-bottom: 18px;
+      color: #7df9ff;
+      letter-spacing: 2px;
+      text-shadow: 0 0 15px #00eaff, 0 0 35px #00eaff;
+    }
+
+    .tagline {
+      font-size: 14px;
+      color: #a9d8ff;
+      margin-bottom: 24px;
+    }
+
+    .search-box {
+      margin-top: 10px;
+    }
+
+    #query {
+      width: 60vw;
+      max-width: 520px;
+      padding: 12px 18px;
+      border-radius: 999px;
+      border: 2px solid #7df9ff;
+      background: #020617;
+      color: #e0f4ff;
+      font-size: 16px;
+      outline: none;
+      box-shadow: 0 0 15px rgba(0, 234, 255, 0.5);
+    }
+
+    #query::placeholder {
+      color: #6f8fb0;
+    }
+
+    .buttons {
+      margin-top: 18px;
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    button {
+      padding: 8px 16px;
+      border-radius: 999px;
+      border: 1px solid #00eaff;
+      background: #020617;
+      color: #e0f4ff;
+      font-size: 14px;
+      cursor: pointer;
+      text-shadow: 0 0 8px #00eaff;
+      box-shadow: 0 0 12px rgba(0, 234, 255, 0.7);
+      transition: background 0.15s, transform 0.15s, box-shadow 0.15s;
+    }
+
+    button:hover {
+      background: #00eaff;
+      color: #020617;
+      transform: translateY(-1px);
+      box-shadow: 0 0 18px rgba(0, 234, 255, 1);
+    }
+
+    .hint {
+      margin-top: 10px;
+      font-size: 12px;
+      color: #7fa9d9;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Neon Browser</h1>
+    <div class="tagline">Your own search start page.</div>
+
+    <div class="search-box">
+      <input type="text" id="query" placeholder="Search the web...">
+    </div>
+
+    <div class="buttons">
+      <button onclick="search('google')">Google</button>
+      <button onclick="search('bing')">Bing</button>
+      <button onclick="search('duckduckgo')">DuckDuckGo</button>
+    </div>
+
+    <div class="hint">Press Enter to search with Google.</div>
+  </div>
+
+  <script>
+    function search(engine) {
+      const q = document.getElementById('query').value.trim();
+      if (!q) return;
+
+      let url = '';
+      if (engine === 'google') {
+        url = 'https://www.google.com/search?q=' + encodeURIComponent(q);
+      } else if (engine === 'bing') {
+        url = 'https://www.bing.com/search?q=' + encodeURIComponent(q);
+      } else if (engine === 'duckduckgo') {
+        url = 'https://duckduckgo.com/?q=' + encodeURIComponent(q);
+      }
+
+      window.location.href = url;
+    }
+
+    document.getElementById('query').addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') {
+        search('google');
+      }
+    });
+  </script>
+</body>
+</html>
