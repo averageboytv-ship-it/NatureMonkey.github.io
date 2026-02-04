@@ -4,33 +4,101 @@
   <meta charset="UTF-8">
   <title>Neon Browser</title>
   <style>
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       margin: 0;
       height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
-      background: radial-gradient(circle at top, #071426 0, #02030a 45%, #000000 100%);
       font-family: Arial, sans-serif;
       color: #e0f4ff;
+      overflow: hidden;
+      background: radial-gradient(circle at top, #071426 0, #02030a 45%, #000000 100%);
+      animation: bgShift 18s ease-in-out infinite alternate;
+    }
+
+    @keyframes bgShift {
+      0% {
+        background: radial-gradient(circle at top, #071426 0, #02030a 45%, #000000 100%);
+      }
+      50% {
+        background: radial-gradient(circle at center, #050018 0, #020617 40%, #000000 100%);
+      }
+      100% {
+        background: radial-gradient(circle at bottom, #020617 0, #050018 40%, #000000 100%);
+      }
+    }
+
+    .glow-orb {
+      position: fixed;
+      width: 420px;
+      height: 420px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(0, 234, 255, 0.35), transparent 60%);
+      filter: blur(4px);
+      top: -80px;
+      left: -60px;
+      pointer-events: none;
+      animation: orbFloat 16s ease-in-out infinite alternate;
+      z-index: 0;
+    }
+
+    .glow-orb2 {
+      position: fixed;
+      width: 380px;
+      height: 380px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255, 0, 255, 0.25), transparent 60%);
+      filter: blur(4px);
+      bottom: -60px;
+      right: -40px;
+      pointer-events: none;
+      animation: orbFloat2 20s ease-in-out infinite alternate;
+      z-index: 0;
+    }
+
+    @keyframes orbFloat {
+      0% { transform: translate(0, 0); opacity: 0.7; }
+      100% { transform: translate(40px, 60px); opacity: 1; }
+    }
+
+    @keyframes orbFloat2 {
+      0% { transform: translate(0, 0); opacity: 0.6; }
+      100% { transform: translate(-40px, -40px); opacity: 1; }
     }
 
     .container {
+      position: relative;
+      z-index: 1;
       text-align: center;
+      max-width: 800px;
+      width: 100%;
+      padding: 20px;
     }
 
     h1 {
       font-size: 52px;
-      margin-bottom: 18px;
+      margin-bottom: 6px;
       color: #7df9ff;
       letter-spacing: 2px;
       text-shadow: 0 0 15px #00eaff, 0 0 35px #00eaff;
+      animation: titlePulse 3.5s ease-in-out infinite;
+    }
+
+    @keyframes titlePulse {
+      0%, 100% { text-shadow: 0 0 15px #00eaff, 0 0 35px #00eaff; }
+      50% { text-shadow: 0 0 25px #00eaff, 0 0 55px #00eaff; }
     }
 
     .tagline {
       font-size: 14px;
       color: #a9d8ff;
       margin-bottom: 24px;
+      opacity: 0.9;
     }
 
     .search-box {
@@ -38,23 +106,24 @@
     }
 
     #query {
-      width: 60vw;
-      max-width: 520px;
+      width: 70vw;
+      max-width: 560px;
       padding: 12px 18px;
       border-radius: 999px;
       border: 2px solid #7df9ff;
-      background: #020617;
+      background: rgba(2, 6, 23, 0.95);
       color: #e0f4ff;
       font-size: 16px;
       outline: none;
       box-shadow: 0 0 15px rgba(0, 234, 255, 0.5);
+      backdrop-filter: blur(6px);
     }
 
     #query::placeholder {
       color: #6f8fb0;
     }
 
-    .buttons {
+    .engine-buttons {
       margin-top: 18px;
       display: flex;
       justify-content: center;
@@ -66,13 +135,13 @@
       padding: 8px 16px;
       border-radius: 999px;
       border: 1px solid #00eaff;
-      background: #020617;
+      background: rgba(2, 6, 23, 0.9);
       color: #e0f4ff;
-      font-size: 14px;
+      font-size: 13px;
       cursor: pointer;
       text-shadow: 0 0 8px #00eaff;
       box-shadow: 0 0 12px rgba(0, 234, 255, 0.7);
-      transition: background 0.15s, transform 0.15s, box-shadow 0.15s;
+      transition: background 0.15s, transform 0.15s, box-shadow 0.15s, color 0.15s;
     }
 
     button:hover {
@@ -87,24 +156,126 @@
       font-size: 12px;
       color: #7fa9d9;
     }
+
+    .tiles {
+      margin-top: 28px;
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 14px;
+    }
+
+    .tile {
+      width: 110px;
+      padding: 10px 8px;
+      border-radius: 14px;
+      background: rgba(3, 10, 35, 0.9);
+      border: 1px solid rgba(125, 249, 255, 0.4);
+      box-shadow: 0 0 12px rgba(0, 234, 255, 0.35);
+      cursor: pointer;
+      transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s, background 0.15s;
+      font-size: 12px;
+      color: #d7ecff;
+    }
+
+    .tile:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 18px rgba(0, 234, 255, 0.8);
+      border-color: #7df9ff;
+      background: rgba(5, 18, 60, 0.95);
+    }
+
+    .tile-title {
+      font-weight: bold;
+      margin-bottom: 4px;
+      color: #7df9ff;
+      text-shadow: 0 0 8px #00eaff;
+    }
+
+    .tile-sub {
+      font-size: 11px;
+      color: #9fc4ff;
+    }
+
+    .footer {
+      margin-top: 26px;
+      font-size: 12px;
+      color: #7fa9d9;
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      opacity: 0.9;
+    }
+
+    .clock {
+      font-family: "Consolas", monospace;
+      color: #cfe8ff;
+    }
+
+    @media (max-width: 600px) {
+      h1 {
+        font-size: 38px;
+      }
+      #query {
+        width: 80vw;
+      }
+      .tile {
+        width: 45%;
+        max-width: 140px;
+      }
+    }
   </style>
 </head>
 <body>
+  <div class="glow-orb"></div>
+  <div class="glow-orb2"></div>
+
   <div class="container">
     <h1>Neon Browser</h1>
-    <div class="tagline">Your own search start page.</div>
+    <div class="tagline">One search box. Your web, your way.</div>
 
     <div class="search-box">
-      <input type="text" id="query" placeholder="Search the web...">
+      <input type="text" id="query" placeholder="Search the web, YouTube, or Wikipedia...">
     </div>
 
-    <div class="buttons">
+    <div class="engine-buttons">
       <button onclick="search('google')">Google</button>
       <button onclick="search('bing')">Bing</button>
       <button onclick="search('duckduckgo')">DuckDuckGo</button>
+      <button onclick="search('youtube')">YouTube</button>
+      <button onclick="search('wikipedia')">Wikipedia</button>
     </div>
 
-    <div class="hint">Press Enter to search with Google.</div>
+    <div class="hint">Press Enter to search with Google by default.</div>
+
+    <div class="tiles">
+      <div class="tile" onclick="openLink('https://www.youtube.com')">
+        <div class="tile-title">YouTube</div>
+        <div class="tile-sub">Videos & music</div>
+      </div>
+      <div class="tile" onclick="openLink('https://discord.com/app')">
+        <div class="tile-title">Discord</div>
+        <div class="tile-sub">Chat & servers</div>
+      </div>
+      <div class="tile" onclick="openLink('https://www.roblox.com')">
+        <div class="tile-title">Roblox</div>
+        <div class="tile-sub">Games & experiences</div>
+      </div>
+      <div class="tile" onclick="openLink('https://mail.google.com')">
+        <div class="tile-title">Gmail</div>
+        <div class="tile-sub">Email</div>
+      </div>
+      <div class="tile" onclick="openLink('https://github.com')">
+        <div class="tile-title">GitHub</div>
+        <div class="tile-sub">Code & projects</div>
+      </div>
+    </div>
+
+    <div class="footer">
+      <div class="clock" id="clock"></div>
+      <div>Neon start page by you.</div>
+    </div>
   </div>
 
   <script>
@@ -119,6 +290,10 @@
         url = 'https://www.bing.com/search?q=' + encodeURIComponent(q);
       } else if (engine === 'duckduckgo') {
         url = 'https://duckduckgo.com/?q=' + encodeURIComponent(q);
+      } else if (engine === 'youtube') {
+        url = 'https://www.youtube.com/results?search_query=' + encodeURIComponent(q);
+      } else if (engine === 'wikipedia') {
+        url = 'https://en.wikipedia.org/wiki/Special:Search?search=' + encodeURIComponent(q);
       }
 
       window.location.href = url;
@@ -129,6 +304,30 @@
         search('google');
       }
     });
+
+    function openLink(url) {
+      window.location.href = url;
+    }
+
+    function updateClock() {
+      const el = document.getElementById('clock');
+      const now = new Date();
+      const hours = String(now.getHours()).padStart(2, '0');
+      const minutes = String(now.getMinutes()).padStart(2, '0');
+      const seconds = String(now.getSeconds()).padStart(2, '0');
+
+      const dateStr = now.toLocaleDateString(undefined, {
+        weekday: 'short',
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric'
+      });
+
+      el.textContent = `${hours}:${minutes}:${seconds} • ${dateStr}`;
+    }
+
+    updateClock();
+    setInterval(updateClock, 1000);
   </script>
 </body>
 </html>
